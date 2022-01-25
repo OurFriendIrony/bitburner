@@ -1,189 +1,173 @@
 factions:
+  #--------------------------------------------------------
+  # HACKER
+  #--------------------------------------------------------
+
   - name: CyberSec
-    type: hacker
-    reqs:
-      hack: "CSEC"
+    hack: "CSEC"
 
   - name: Tian Di Hui
-    type: hacker
-    reqs:
-      city: ["Chongquin", "New Tokyo", "Ishima"]
-      hack-skill: 50
-      money: 1000000
+    city: ["Chongquin", "New Tokyo", "Ishima"]
+    hack-skill: 50
+    money: 1000000
 
   - name: Netburners
-    type: hacker
-    reqs:
-      hack-skill: 80
-      hacknet-levels: 100
-      hacknet-ram: 8
-      hacknet-cores: 4
+    hack-skill: 80
+    hacknet-levels: 100
+    hacknet-ram: 8
+    hacknet-cores: 4
 
   - name: NiteSec
-    type: hacker
-    reqs:
-      hack: "avmnite-02h"
-      home-ram: 32
+    hack: "avmnite-02h"
+    home-ram: 32
 
   - name: The Black Hand
-    type: hacker
-    reqs:
-      hack: "I.I.I.I"
-      home-ram: 64
+    hack: "I.I.I.I"
+    home-ram: 64
 
   - name: BitRunners
-    type: hacker
-    reqs:
-      hack: "run4theh111z"
-      home-ram: 128
+    hack: "run4theh111z"
+    home-ram: 128
+
+  #--------------------------------------------------------
+  # CITY
+  #--------------------------------------------------------
 
   - name: Sector-12
-    type: city
-    reqs:
-      money": 15000000,
-      city": ["Sector-12"]
-      faction-exclusions: []
+    money": 15000000,
+    city": ["Sector-12"]
+    faction-exclusions: []
 
   - name: Chongquin
-    type: city
-    reqs:
-      money": 20000000,
-      city": ["Chongquin"]
-      faction-exclusions: ["Sector-12", "Aevum", "Volhaven"]
+    money": 20000000,
+    city": ["Chongquin"]
+    faction-exclusions: ["Sector-12", "Aevum", "Volhaven"]
 
   - name: New Tokyo
-    type: city
-    reqs:
-      money: 20000000,
-      city: ["New Tokyo"]
-      faction-exclusions: ["Sector-12", "Aevum", "Volhaven"]
+    money: 20000000,
+    city: ["New Tokyo"]
+    faction-exclusions: ["Sector-12", "Aevum", "Volhaven"]
 
   - name: Ishima
-    type: city
-    reqs:
-      money: 30000000,
-      city: ["Ishima"]
-      faction-exclusions: ["Sector-12", "Aevum", "Volhaven"]
+    money: 30000000,
+    city: ["Ishima"]
+    faction-exclusions: ["Sector-12", "Aevum", "Volhaven"]
 
   - name: Aevum
-    type: city
-    reqs:
-      money: 40000000,
-      city: ["Aevum"]
-      faction-exclusions: []
+    money: 40000000,
+    city: ["Aevum"]
+    faction-exclusions: []
 
   - name: Volhaven
-    type: city
-    reqs:
-      money: 50000000,
-      city: ["Volhaven"]
-      faction-exclusions:
-        ["Sector-12", "Aevum", "New Tokyo", "Ishima", "Chongquin"]
+    money: 50000000,
+    city: ["Volhaven"]
+    faction-exclusions:
+      ["Sector-12", "Aevum", "New Tokyo", "Ishima", "Chongquin"]
+
+  #--------------------------------------------------------
+  # COMPANY
+  #--------------------------------------------------------
 
   - name: MegaCorp
-    type: company
-    reqs:
-      rep-company: "MegaCorp"
-      rep-value: 200000
+    rep-company: "MegaCorp"
+    rep-value: 200000
 
   - name: Blade Industries
-    type: company
-    reqs:
-      rep-company: "Blade Industries"
-      rep-value: 200000
+    rep-company: "Blade Industries"
+    rep-value: 200000
 
   - name: Four Sigma
-    type: company
-    reqs:
-      rep-company: "Four Sigma"
-      rep-value: 200000
+    rep-company: "Four Sigma"
+    rep-value: 200000
 
   - name: KuaiGong International
-    type: company
-    reqs:
-      rep-company: "KuaiGong International"
-      rep-value: 200000
+    rep-company: "KuaiGong International"
+    rep-value: 200000
 
   - name: NWO
-    type: company
-    reqs:
-      rep-company: "NWO"
-      rep-value: 200000
+    rep-company: "NWO"
+    rep-value: 200000
 
   - name: OmniTek Incorporated
-    type: company
-    reqs:
-      rep-company: "OmniTek Incorporated"
-      rep-value: 200000
+    rep-company: "OmniTek Incorporated"
+    rep-value: 200000
 
   - name: ECorp
-    type: company
-    reqs:
-      rep-company: "ECorp"
-      rep-value: 200000
+    rep-company: "ECorp"
+    rep-value: 200000
 
   - name: Bachman & Associates
-    type: company
-    reqs:
-      rep-company: "Bachman & Associates"
-      rep-value: 200000
+    rep-company: "Bachman & Associates"
+    rep-value: 200000
 
   - name: Clarke Incorporated
-    type: company
-    reqs:
-      rep-company: "Clarke Incorporated"
-      rep-value: 200000
+    rep-company: "Clarke Incorporated"
+    rep-value: 200000
 
   - name: Fulcrum Secret Technologies
-    type: company
-    reqs:
-      rep-company: "Fulcrum Secret Technologies"
-      rep-value: 200000
-      hack: fulcrumassets
-# Slum Snakes:
-# All combat stats 30
-# -9 karma
-# $1,000,000
-# Tetrads:
-# Be in Chongquin, New Tokyo, or Ishima
-# All combat stats 75
-# -18 karma
-# Silhouette:
-# CTO, CFO, or CEO at any company
-# $15,000,000
-# -22 karma
-# Speakers for the Dead:
-# Hacking 100
-# All combat stats 300
-# 30 people killed
-# -45 karma
-# NOT working for CIA or NSA
-# The Dark Army:
-# Hacking 300
-# All combat stats 300
-# Be in Chongquin
-# 5 people killed
-# -45 karma
-# NOT working for CIA or NSA
-# The Syndicate:
-# Hacking 200
-# All combat stats 200
-# Be in Aevum or Sector-12
-# $10,000,000
-# -90 karma
-# NOT working for CIA or NSA
+    rep-company: "Fulcrum Secret Technologies"
+    rep-value: 200000
+    hack: fulcrumassets
 
-# The Covenant:
-# 30 augmentations
-# $75,000,000,000
-# Hacking 850
-# All combat stats 850
-# Daedalus:
-# 30 augmentations
-# $100,000,000,000
-# Hacking 2500 or all combat stats 1500
-# Illuminati:
-# 30 augmentations
-# $150,000,000,000
-# Hacking 1500
-# All combat stats 1200
+  #--------------------------------------------------------
+  # CRIME
+  #--------------------------------------------------------
+
+  - name: Slum Snakes
+    combat-stats: 30
+    karma: -9
+    money: 1000000
+
+  - name: Tetrads
+    city: ["Chongquin", "New Tokyo", "Ishima"]
+    combat-stats: 75
+    karma: -18
+
+  - name: Silhouette
+    job: ["CTO", "CFO", "CEO"]
+    karma: -22
+    money: 15000000
+
+  - name: Speakers for the Dead
+    hack-skill: 100
+    combat-stats: 300
+    killed: 30
+    karma: -45
+    money: 15000000
+
+  - name: The Dark Army
+    hack-skill: 300
+    combat-stats: 300
+    killed: 5
+    karma: -45
+    company-exclusions: ["CIA", "NSA"]
+
+  - name: The Syndicate
+    hack-skill: 200
+    combat-stats: 200
+    city: ["Aevum", "Sector-12"]
+    money: 10000000
+    karma: -90
+    company-exclusions: ["CIA", "NSA"]
+
+  #--------------------------------------------------------
+  # END GAME
+  #--------------------------------------------------------
+
+  - name: The Covenant
+    augmentations: 30
+    money: 75000000000
+    hack-skill: 850
+    combat-stats: 850
+
+  - name: Daedalus
+    augmentations: 30
+    money: 100000000000
+    hack-skill: 2500
+    combat-stats: 1500
+
+  - name: Illuminati
+    augmentations: 30
+    money: 150000000000
+    hack-skill: 1500
+    combat-stats: 1200
