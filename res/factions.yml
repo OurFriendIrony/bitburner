@@ -1,0 +1,161 @@
+factions:
+  - name: CyberSec
+    type: hacker
+    reqs:
+      hack: "CSEC"
+
+  - name: Tian Di Hui
+    type: hacker
+    reqs:
+      city: ["Chongquin", "New Tokyo", "Ishima"]
+      hack-skill: 50
+      money: 1000000
+
+  - name: Netburners
+    type: hacker
+    reqs:
+      hack-skill: 80
+      hacknet-levels: 100
+      hacknet-ram: 8
+      hacknet-cores: 4
+
+  - name: NiteSec
+    type: hacker
+    reqs:
+      hack: "avmnite-02h"
+      home-ram: 32
+
+  - name: The Black Hand
+    type: hacker
+    reqs:
+      hack: "I.I.I.I"
+      home-ram: 64
+
+  - name: BitRunners
+    type: hacker
+    reqs:
+      hack: "run4theh111z"
+      home-ram: 128
+
+  - name: Sector-12
+    type: city
+    reqs:
+      money": 15000000,
+      city": ["Sector-12"]
+      faction-exclusions: []
+
+  - name: Chongquin
+    type: city
+    reqs:
+      money": 20000000,
+      city": ["Chongquin"]
+      faction-exclusions: ["Sector-12", "Aevum", "Volhaven"]
+
+  - name: New Tokyo
+    type: city
+    reqs:
+      money: 20000000,
+      city: ["New Tokyo"]
+      faction-exclusions: ["Sector-12", "Aevum", "Volhaven"]
+
+  - name: Ishima
+    type: city
+    reqs:
+      money: 30000000,
+      city: ["Ishima"]
+      faction-exclusions: ["Sector-12", "Aevum", "Volhaven"]
+
+  - name: Aevum
+    type: city
+    reqs:
+      money: 40000000,
+      city: ["Aevum"]
+      faction-exclusions: []
+
+  - name: Volhaven
+    type: city
+    reqs:
+      money: 50000000,
+      city: ["Volhaven"]
+      faction-exclusions:
+        ["Sector-12", "Aevum", "New Tokyo", "Ishima", "Chongquin"]
+# ---
+# MegaCorp:
+# Work for MegaCorp
+# At least 200,000 reputation
+# Blade Industries:
+# Work for Blade Industries
+# At least 200,000 reputation
+# Four Sigma:
+# Work for Four Sigma
+# At least 200,000 reputation
+# KuaiGong International:
+# Work for KuaiGong International
+# At least 200,000 reputation
+# NWO:
+# Work for NWO
+# At least 200,000 reputation
+# OmniTek Incorporated:
+# Work for OmniTek Incorporated
+# At least 200,000 reputation
+# ECorp:
+# Work for ECorp
+# At least 200,000 reputation
+# Bachman & Associates:
+# Work for Backman & Associates
+# At least 200,000 reputation
+# Clarke Incorporated:
+# Work for Clarke Incorporated
+# At least 200,000 reputation
+# Fulcrum Secret Technologies:
+# Work for Fulcrum Technologies
+# At least 200,000 reputation
+# Hack fulcrumassets manually
+
+# Slum Snakes:
+# All combat stats 30
+# -9 karma
+# $1,000,000
+# Tetrads:
+# Be in Chongquin, New Tokyo, or Ishima
+# All combat stats 75
+# -18 karma
+# Silhouette:
+# CTO, CFO, or CEO at any company
+# $15,000,000
+# -22 karma
+# Speakers for the Dead:
+# Hacking 100
+# All combat stats 300
+# 30 people killed
+# -45 karma
+# NOT working for CIA or NSA
+# The Dark Army:
+# Hacking 300
+# All combat stats 300
+# Be in Chongquin
+# 5 people killed
+# -45 karma
+# NOT working for CIA or NSA
+# The Syndicate:
+# Hacking 200
+# All combat stats 200
+# Be in Aevum or Sector-12
+# $10,000,000
+# -90 karma
+# NOT working for CIA or NSA
+
+# The Covenant:
+# 30 augmentations
+# $75,000,000,000
+# Hacking 850
+# All combat stats 850
+# Daedalus:
+# 30 augmentations
+# $100,000,000,000
+# Hacking 2500 or all combat stats 1500
+# Illuminati:
+# 30 augmentations
+# $150,000,000,000
+# Hacking 1500
+# All combat stats 1200
