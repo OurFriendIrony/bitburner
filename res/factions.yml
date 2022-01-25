@@ -79,39 +79,67 @@ factions:
       city: ["Volhaven"]
       faction-exclusions:
         ["Sector-12", "Aevum", "New Tokyo", "Ishima", "Chongquin"]
-# ---
-# MegaCorp:
-# Work for MegaCorp
-# At least 200,000 reputation
-# Blade Industries:
-# Work for Blade Industries
-# At least 200,000 reputation
-# Four Sigma:
-# Work for Four Sigma
-# At least 200,000 reputation
-# KuaiGong International:
-# Work for KuaiGong International
-# At least 200,000 reputation
-# NWO:
-# Work for NWO
-# At least 200,000 reputation
-# OmniTek Incorporated:
-# Work for OmniTek Incorporated
-# At least 200,000 reputation
-# ECorp:
-# Work for ECorp
-# At least 200,000 reputation
-# Bachman & Associates:
-# Work for Backman & Associates
-# At least 200,000 reputation
-# Clarke Incorporated:
-# Work for Clarke Incorporated
-# At least 200,000 reputation
-# Fulcrum Secret Technologies:
-# Work for Fulcrum Technologies
-# At least 200,000 reputation
-# Hack fulcrumassets manually
 
+  - name: MegaCorp
+    type: company
+    reqs:
+      rep-company: "MegaCorp"
+      rep-value: 200000
+
+  - name: Blade Industries
+    type: company
+    reqs:
+      rep-company: "Blade Industries"
+      rep-value: 200000
+
+  - name: Four Sigma
+    type: company
+    reqs:
+      rep-company: "Four Sigma"
+      rep-value: 200000
+
+  - name: KuaiGong International
+    type: company
+    reqs:
+      rep-company: "KuaiGong International"
+      rep-value: 200000
+
+  - name: NWO
+    type: company
+    reqs:
+      rep-company: "NWO"
+      rep-value: 200000
+
+  - name: OmniTek Incorporated
+    type: company
+    reqs:
+      rep-company: "OmniTek Incorporated"
+      rep-value: 200000
+
+  - name: ECorp
+    type: company
+    reqs:
+      rep-company: "ECorp"
+      rep-value: 200000
+
+  - name: Bachman & Associates
+    type: company
+    reqs:
+      rep-company: "Bachman & Associates"
+      rep-value: 200000
+
+  - name: Clarke Incorporated
+    type: company
+    reqs:
+      rep-company: "Clarke Incorporated"
+      rep-value: 200000
+
+  - name: Fulcrum Secret Technologies
+    type: company
+    reqs:
+      rep-company: "Fulcrum Secret Technologies"
+      rep-value: 200000
+      hack: fulcrumassets
 # Slum Snakes:
 # All combat stats 30
 # -9 karma

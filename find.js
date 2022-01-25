@@ -1,5 +1,5 @@
 var HOME = "home";
-var VIEW_COMMAND = true;
+var AS_COMMAND = true;
 
 /** @param {NS} ns **/
 export async function main(ns) {
@@ -12,14 +12,15 @@ export async function main(ns) {
         if (path == null) {
             ns.tprint(`'${find_host}' not found`)
         } else {
-            VIEW_COMMAND ? asCommand(ns, path) : asPath(ns, path)
+            AS_COMMAND ? asCommand(ns, path) : asPath(ns, path)
         }
     } else {
         ns.tprint("no host...")
     }
 }
 function asCommand(ns, path) {
-    ns.tprint(`${HOME}; connect ${path.split(",").join("; connect ")}; backdoor; hack`)
+    ns.tprint(`${HOME}; connect ${path.split(",").join("; connect ")}; backdoor`)
+    navigator.clipboard.writeText(`${HOME}; connect ${path.split(",").join("; connect ")}; backdoor`)
 }
 function asPath(ns, path) {
     ns.tprint(`${HOME} > ${path.split(",").join(" > ")}`)

@@ -5,4 +5,3 @@ export async function main(ns) {
     var host = ns.args[2] == null ? ns.getHostname() : ns.args[2];
     await ns.grow(host, { "threads": threads });
 }
-
