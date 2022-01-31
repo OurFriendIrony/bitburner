@@ -34,12 +34,12 @@ export async function main(ns) {
                 ns.tprint(`'${target}' is being '${mode}'d`)
 
                 await process(ns, target, mode)
-
-                if (getHostInfo(ns, target).money.perc > 95) {
+                var hostInfo = getHostInfo(ns, target)
+                if (hostInfo.money.perc > 95) {
                     ns.tprint(`'${target}' has grown > 95%`)
-                } else if (getHostInfo(ns, target).money.perc == 0) {
+                } else if (hostInfo.money.perc == 0) {
                     ns.tprint(`'${target}' has run out of money`)
-                } else if (getHostInfo(ns, target).security.diff == 0) {
+                } else if (hostInfo.security.diff == 0) {
                     ns.tprint(`'${target}' has been weakened`)
                 }
                 await ns.sleep(PAUSE)
@@ -67,32 +67,51 @@ async function process(ns, target, mode) {
         clrLog(ns);
 
         header(ns, target)
-        var nodes = getNodes(ns)
-        for (var i = 0; i < nodes.length; i++) {
-            var node = nodes[i]
-            var totals = { "h": 0, "w": 0, "g": 0, "n": 0 }
-            var m = 0
 
-            if (((i + 1) % weight_hack) == 0) { node.script = getHackScript(ns); m = "h" }
-            else if (((i + 1) % weight_weaken) == 0) { node.script = getWeakenScript(ns); m = "w" }
-            else if (((i + 1) % weight_grow) == 0) { node.script = getGrowScript(ns); m = "g" }
-            else { node.script = getNothingScript(); m = "n" }
+        var home = getHostInfo(ns, HOME);
+        var node = home
 
-            if (node.script.script != "---") {
-                await ns.scp(node.script.script, HOME, node.host)
-                var num = parseInt(node.ram.free / node.script.ram);
-                totals[m] += num
-                for (var s = 0; s < num; s++) {
-                    await ns.exec(node.script.script, node.host, DEFAULT_THREADS, s, DEFAULT_THREADS, target)
-                    await ns.sleep(PAUSE)
-                }
+        var totals = { "h": 0, "w": 0, "g": 0, "n": 0 }
+        var m = "n"
+
+        var free_ram = node.ram.free - 64
+
+        var i = 0
+        var bail = false
+        while (free_ram >= 0 && !bail) {
+            if (((i + 1) % weight_hack) == 0) {
+                node.script = getHackScript(ns)
+                m = "h"
+
+            } else if (((i + 1) % weight_weaken) == 0) {
+                node.script = getWeakenScript(ns)
+                m = "w"
+
+            } else if (((i + 1) % weight_grow) == 0) {
+                node.script = getGrowScript(ns)
+                m = "g"
+
+            } else {
+                node.script = getNothingScript()
+                m = "n"
             }
 
+            if (node.script.script != "---") {
+                free_ram -= node.script.ram;
+                if (free_ram < 0) {
+                    bail = true
+                } else {
+                    totals[m] += 1
+                    ns.exec(node.script.script, node.host, DEFAULT_THREADS, i, DEFAULT_THREADS, target)
+                }
+            }
+            i++
+            clrLog(ns);
+            header(ns, target)
             prnt(ns, node, totals)
             await ns.sleep(PAUSE)
         }
     }
-
 }
 
 function getGrowScript(ns) {
@@ -108,17 +127,6 @@ function getNothingScript() {
     return { "script": "---", "ram": 0 }
 }
 
-function getNodes(ns) {
-    var all = ns.scan(HOME);
-    var nodes = [];
-    for (var n = 0; n < all.length; n++) {
-        var node = all[n];
-        if (node.includes("node")) {
-            nodes.push(getHostInfo(ns, node));
-        }
-    }
-    return nodes
-}
 //======================================================================
 // Display
 //======================================================================

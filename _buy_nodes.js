@@ -4,11 +4,11 @@ var BASE_COST = 110000;
 var NODE_MULTIPLIER = 1;
 
 var MAX_SERVERS = 25;
-//var MAX_MULTIPLIER = 12; // 4096 GB
 var MAX_MULTIPLIER = 10; // 1024 GB
 
 /** @param {NS} ns **/
 export async function main(ns) {
+    ns.tail()
     var mult = NODE_MULTIPLIER;
     while (true) {
         await ns.sleep(1000)

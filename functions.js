@@ -92,6 +92,7 @@ export function getPlayerInfo(ns) {
             "core_cost": { "mult": p.hacknet_node_core_cost_mult },
             "level_cost": { "mult": p.hacknet_node_level_cost_mult }
         },
+        "jobs": p.jobs,
         "raw": p
     }
 
@@ -108,7 +109,7 @@ export function getPlayerInfo(ns) {
         "charisma", "charisma_exp", "charisma_mult", "charisma_exp_mult",
         "intelligence",
         "hacking_chance_mult", "hacking_speed_mult", "hacking_money_mult", "hacking_grow_mult",
-        "factions",
+        "factions", "jobs",
         "isWorking", "workType", "currentWorkFactionName", "currentWorkFactionDescription",
         "crimeType", "crime_money_mult", "crime_success_mult",
         "hacknet_node_money_mult", "hacknet_node_purchase_cost_mult", "hacknet_node_ram_cost_mult", "hacknet_node_core_cost_mult", "hacknet_node_level_cost_mult"
@@ -125,13 +126,13 @@ export function getPlayerInfo(ns) {
 // Getting Host Information
 //======================================================================
 
-function getRAMInfo(ns, child_host) {
+export function getRAMInfo(ns, child_host) {
     var max = ns.getServerMaxRam(child_host)
     var used = ns.getServerUsedRam(child_host)
     return { "max": max, "used": used, "free": (max - used) }
 }
 
-function getPorts(h) {
+export function getPorts(h) {
     var diff = h.numOpenPortsRequired - h.openPortCount;
     var met = diff <= 0;
     var left = met ? 0 : diff;
@@ -139,7 +140,7 @@ function getPorts(h) {
     return { "have": h.openPortCount, "need": h.numOpenPortsRequired, "left": left, "met": met, "open": open };
 }
 
-function getHackInfo(ns, h) {
+export function getHackInfo(ns, h) {
     var have = ns.getHackingLevel();
     var need = h.requiredHackingSkill
     var diff = need - have;
@@ -148,12 +149,13 @@ function getHackInfo(ns, h) {
     return { "have": have, "level": need, "left": left, "met": met }
 }
 
-export function getHostInfo(ns, child_host) {
+export function getHostInfo(ns, child_host, level = 0) {
     var h = ns.getServer(child_host);
 
     return {
         "host": h.hostname,
         "owned": h.purchasedByPlayer,
+        "level": level,
         "access": {
             "root": h.hasAdminRights,
             "backdoor": h.backdoorInstalled
@@ -176,6 +178,34 @@ export function getHostInfo(ns, child_host) {
             "diff": (h.hackDifficulty - h.minDifficulty).toFixed(2)
         }
     }
+}
+
+//======================================================================
+// Getting all host info
+//======================================================================
+
+export function explore(ns, hosts, parent_host, target_host, level) {
+    ns.scan(target_host).filter(child_host => child_host != parent_host).forEach(child_host => {
+        var obj = getHostInfo(ns, child_host, level);
+        // openPorts(ns, obj)
+        hosts.push(obj)
+        explore(ns, hosts, target_host, child_host, (level + 1))
+    })
+}
+
+//======================================================================
+// Formatting
+//======================================================================
+const UNITS_MONEY = [' ', 'k', 'm', 'b', 't', 'p', 'e', 'z', 'y']
+
+export function formatUnits(initialValue) {
+    var unit_i = 0
+    var v = initialValue;
+    while (v >= 1000) {
+        unit_i += 1
+        v = parseInt(v / 1000)
+    }
+    return `${v}${UNITS_MONEY[unit_i]}`;
 }
 
     //======================================================================
