@@ -8,27 +8,29 @@ var SCRIPT_HACK = "r_hack.js"
 
 var DEFAULT_THREADS = 1
 var PAUSE = 10;
-
+var RAM_TO_SAVE = 32
 /** @param {NS} ns **/
 export async function main(ns) {
+    clrLog(ns)
     while (true) {
         var hosts = []
         explore(ns, hosts, '', HOME, 0)
 
         var weakenTargets = hosts
-            .filter(o => o.money.diff > 1)
-            .filter(o => o.access.root)
+            .filter(o => (o.access.root && o.port.met && o.hack.met))
+            .filter(o => o.money.avail > 0)
             .filter(o => o.security.diff > 1)
 
         var growTargets = hosts
-            .filter(o => o.money.diff > 1)
-            .filter(o => o.access.root)
+            .filter(o => (o.access.root && o.port.met && o.hack.met))
+            .filter(o => o.money.avail > 0)
             .filter(o => o.money.perc < 95)
 
-        await ns.sleep(10)
-        // ns.tprint(`${weakenTargets.length} hosts to weaken`)
-        // ns.tprint(`${growTargets.length} hosts to grow`)
+        var hackTargets = hosts
+            .filter(o => (o.access.root && o.port.met && o.hack.met))
+            .filter(o => o.money.avail > 0)
 
+        ns.print(`${weakenTargets.length} hosts to weaken`)
         for (var x = 0; x < weakenTargets.length; x++) {
             var target = weakenTargets[x]
             var mode = "weaken"
@@ -38,6 +40,7 @@ export async function main(ns) {
             await ns.sleep(PAUSE)
         }
 
+        ns.print(`${growTargets.length} hosts to grow`)
         for (var x = 0; x < growTargets.length; x++) {
             var target = growTargets[x]
             var mode = "grow"
@@ -46,43 +49,35 @@ export async function main(ns) {
             await process(ns, target.host, mode)
             await ns.sleep(PAUSE)
         }
+        ns.print(`${hackTargets.length} hosts to hack`)
     }
 }
 
 async function process(ns, target, mode) {
-    clrLog(ns);
-
     var home = getHostInfo(ns, HOME);
     var node = home
 
-    var free_ram = node.ram.free - 64
-
-    var i = 0
+    var free_ram = node.ram.free - RAM_TO_SAVE
 
     if (mode == "hack") {
         node.script = getHackScript(ns)
-        m = "h"
-
     } else if (mode == "weaken") {
         node.script = getWeakenScript(ns)
-        m = "w"
-
     } else if (mode == "grow") {
         node.script = getGrowScript(ns)
-        m = "g"
-
     } else {
         node.script = getNothingScript()
-        m = "n"
     }
 
+    var i = 0
     if (node.script.script != "---") {
         while (i < 100) {
             free_ram -= node.script.ram;
             if (free_ram < 0) {
                 i = 999999999999999
             } else {
-                ns.exec(node.script.script, node.host, DEFAULT_THREADS, i++, DEFAULT_THREADS, target)
+                //ns.exec(node.script.script, node.host, DEFAULT_THREADS, i++, DEFAULT_THREADS, target)
+                ns.exec(node.script.script, node.host, home.cpu.cores, i++, node.cpu.cores, target)
             }
         }
     }
@@ -100,15 +95,4 @@ function getHackScript(ns) {
 }
 function getNothingScript() {
     return { "script": "---", "ram": 0 }
-}
-
-//======================================================================
-// Display
-//======================================================================
-
-var w1 = 16; var w2 = 4; var w3 = 4; var w4 = 4; var w5 = 10;
-
-function header(ns, host) {
-    ns.print(` node | free | used | max | -- ${host} -- `)
-    ns.print(`==================|======|======|======|===============================`)
 }

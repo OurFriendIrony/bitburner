@@ -27,7 +27,11 @@ export async function main(ns) {
         var target = ns.args[0]
         var suggestedMode = ns.args[1] == null ? DEFAULT_MODE : ns.args[1]
 
-        if (ns.serverExists(target)) {
+        if (!ns.serverExists(target)) {
+            ns.tprint(`'${target}' does not exist`)
+        } else if (!getHostInfo(ns, target).access.root) {
+            ns.tprint(`'${target}' not rooted`)
+        } else {
             var doModes = (suggestedMode == "all") ? ["weaken", "grow", "weaken", "balance"] : [suggestedMode]
             for (var i = 0; i < doModes.length; i++) {
                 var mode = doModes[i]
@@ -44,8 +48,6 @@ export async function main(ns) {
                 }
                 await ns.sleep(PAUSE)
             }
-        } else {
-            ns.tprint(`'${target}' does not exist`)
         }
     } else {
         ns.tprint("needs host")

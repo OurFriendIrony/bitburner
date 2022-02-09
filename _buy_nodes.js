@@ -1,3 +1,5 @@
+import { clrLog, getHostInfo, getFactionInfo, getPlayerInfo, formatUnitsV2 } from "functions.js";
+
 var HOME = 'home';
 var BASE_SIZE = 2;
 var BASE_COST = 110000;
@@ -11,8 +13,8 @@ export async function main(ns) {
     ns.tail()
     var mult = NODE_MULTIPLIER;
     while (true) {
-        await ns.sleep(1000)
-        clearLog(ns);
+        await ns.sleep(10)
+        clrLog(ns);
 
         var size = Math.pow(BASE_SIZE, mult);
         var cost = (size / 2) * BASE_COST;
@@ -25,10 +27,13 @@ export async function main(ns) {
         ns.print("cost:")
         ns.print(` mult : ${mult}`)
         ns.print(` ram : ${size}`)
-        ns.print(` cost : ${cost}`)
-        ns.print(` afford : ${buyCount}`)
+        ns.print(` cost : ${formatUnitsV2(cost)}`)
+        ns.print(`afford:`)
+        ns.print(` nodes : ${buyCount}`)
+        ns.print(` total : ${formatUnitsV2(cost * buyCount)}`)
+        ns.print(` nextlvl: ${formatUnitsV2(cost * 50)}`)
         ns.print("owned:")
-        ns.print(` cash : ${cash}`)
+        ns.print(` cash : ${formatUnitsV2(cash)}`)
         ns.print(` nodes : ${currCount}`)
         ns.print('')
 
@@ -43,6 +48,7 @@ export async function main(ns) {
                 var node = availNodes[i]
                 if (node.ram.max == size) {
                     ns.killall(node.host)
+                    await ns.sleep(1000)
                     ns.deleteServer(node.host)
                     ns.purchaseServer(`node-${newSize}-${i}`, newSize)
                 }
@@ -52,7 +58,6 @@ export async function main(ns) {
             // buy what you can at current size
             for (var i = currCount; i < (buyCount + currCount); i++) {
                 ns.purchaseServer(`node-${size}-${i}`, size)
-                await ns.sleep(100);
             }
         }
     }
@@ -68,30 +73,4 @@ function getNodes(ns) {
         }
     }
     return nodes
-}
-
-function clearLog(ns) {
-    var ignore = [
-        "sleep",
-        "scan", "exec", "scp", "nuke",
-        "getServerMaxRam", "getServerUsedRam",
-        "getServerMoneyAvailable", "purchaseServer"
-    ]
-    for (var i = 0; i < ignore.length; i++) { ns.disableLog(ignore[i]); }
-    ns.clearLog()
-}
-
-function getRAMInfo(ns, child_host) {
-    var max = parseInt(ns.getServerMaxRam(child_host))
-    var used = parseInt(ns.getServerUsedRam(child_host))
-    var free = max - used
-
-    return { "max": max, "used": used, "free": free }
-}
-
-function getHostInfo(ns, child_host) {
-    return {
-        "host": child_host,
-        "ram": getRAMInfo(ns, child_host)
-    }
 }

@@ -5,10 +5,8 @@ var HOME = "home"
 export async function main(ns) {
     var resources = ["factions"]
     var scripts = [
-        "_buy_nodes", "_crawl", "_hacknet",
-        "run_home", "run_home_v2", "_run_nodes",
-        "clone", "dev", "factions","find", 
-        "functions", "player",
+        "_buy_nodes", "_crawl", "_hacknet", "_run_ndoes",
+        "clone", "find", "player",
         "r_grow", "r_hack", "r_weaken"
     ]
 

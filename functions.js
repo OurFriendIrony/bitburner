@@ -185,12 +185,15 @@ export function getHostInfo(ns, child_host, level = 0) {
 //======================================================================
 
 export function explore(ns, hosts, parent_host, target_host, level) {
-    ns.scan(target_host).filter(child_host => child_host != parent_host).forEach(child_host => {
-        var obj = getHostInfo(ns, child_host, level);
-        // openPorts(ns, obj)
-        hosts.push(obj)
-        explore(ns, hosts, target_host, child_host, (level + 1))
-    })
+    ns.scan(target_host)
+        .filter(child_host => child_host != parent_host)
+        .forEach(child_host => {
+            var obj = getHostInfo(ns, child_host, level);
+            if (!obj.owned) {
+                hosts.push(obj)
+                explore(ns, hosts, target_host, child_host, (level + 1))
+            }
+        })
 }
 
 //======================================================================
@@ -205,6 +208,19 @@ export function formatUnits(initialValue) {
         unit_i += 1
         v = parseInt(v / 1000)
     }
+    return `${v}${UNITS_MONEY[unit_i]}`;
+}
+
+export function formatUnitsV2(initialValue) {
+    var unit_i = 0
+    var v = initialValue.toFixed(3);
+
+    while (v >= 1000.0) {
+        unit_i += 1
+        v = (v / 1000.0).toFixed(3)
+    }
+
+    v = parseFloat(v).toFixed(1)
     return `${v}${UNITS_MONEY[unit_i]}`;
 }
 

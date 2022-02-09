@@ -1,4 +1,4 @@
-import { clrLog, explore, getRAMInfo, formatUnits } from "functions.js"
+import { clrLog, explore, getRAMInfo, formatUnits, formatUnitsV2 } from "functions.js"
 
 var EMPTY = ".";
 var HACKING = "...";
@@ -12,15 +12,13 @@ var NO_RAM = "no ram"
 var SCRIPT_WEAKEN = "r_weaken.js"
 var SCRIPT_GROW = "r_grow.js"
 var SCRIPT_HACK = "r_hack.js"
-var SCRIPT_FIND = "find.js"
 
 var HOME = "home";
 var SKIP_ERR = true;
 var SKIP_EMPTY = true;
 var ONLY_HACK = false;
 
-var PATH_VIEW_SHORT = true;
-var MIN_SECURITY_MODIFIER = 0.5
+var MIN_SECURITY_MODIFIER = 1.5
 var MIN_MONEY_PERC = 90
 var DEFAULT_THREADS = 1;
 
@@ -33,20 +31,30 @@ export async function main(ns) {
     var ram_hack = ns.getScriptRam(SCRIPT_HACK, HOME);
     clrLog(ns)
 
-    var skip_err = ns.args[0] == null ? SKIP_ERR : ns.args[0]
+    var skip_err = ns.args[0] == null ? SKIP_ERR : Boolean(ns.args[0])
+    var skip_empty = ns.args[1] == null ? SKIP_EMPTY : Boolean(ns.args[1])
 
     while (true) {
         var hosts = [];
         await ns.sleep(1000)
         clearLog(ns);
 
-        var ct_root = 0
-        var ct_backdoor = 0
-        var ct_ports = 0
-        var ct_hack = 0
-        var ct_value = 0
-
         explore(ns, hosts, '', HOME, 0)
+
+        var ct_root = 0
+        var ct_root_shown = 0
+        var ct_backdoor = 0
+        var ct_backdoor_shown = 0
+        var ct_ports = 0
+        var ct_ports_shown = 0
+        var ct_hack = 0
+        var ct_hack_shown = 0
+        var ct_value_avail = 0
+        var ct_value_avail_shown = 0
+        var ct_value_max = 0
+        var ct_value_max_shown = 0
+        var ct_hosts = hosts.length
+        var ct_hosts_shown = 0
 
         header(ns)
         for (var i = 0; i < hosts.length; i++) {
@@ -55,47 +63,51 @@ export async function main(ns) {
             obj.color = "ERROR"
 
             if (obj.hack.met && obj.port.met) {
-                await ns.nuke(obj.host)
-                await ns.scp(SCRIPT_HACK, HOME, obj.host)
-                await ns.scp(SCRIPT_WEAKEN, HOME, obj.host)
-                await ns.scp(SCRIPT_GROW, HOME, obj.host)
-                await ns.scp(SCRIPT_FIND, HOME, obj.host)
-
-                if (obj.money.perc == 0) {
-                    obj.status = EMPTY
-                    obj.color = "INFO"
-                } else if (obj.ram.max < ram_hack) {
-                    obj.status = NO_RAM
-                    obj.color = "WARN"
+                if (!obj.access.root) {
+                    ns.nuke(obj.host)
                 } else {
-                    obj.color = "OK"
-                    ct_value += obj.money.avail
-                    if (!ONLY_HACK && obj.security.current > (obj.security.min + MIN_SECURITY_MODIFIER)) {
-                        obj.status = WEAKENING
-                        obj.ram = getRAMInfo(ns, obj.host);
-                        var num = parseInt(obj.ram.free / ram_weaken);
-                        for (var n = 0; n < num; n++) {
-                            ns.exec(SCRIPT_WEAKEN, obj.host, DEFAULT_THREADS, n)
-                        }
-                        obj.ram.free -= (ram_weaken * num)
+                    await ns.scp(SCRIPT_HACK, HOME, obj.host)
+                    await ns.scp(SCRIPT_WEAKEN, HOME, obj.host)
+                    await ns.scp(SCRIPT_GROW, HOME, obj.host)
 
-                    } else if (!ONLY_HACK && obj.money.perc < MIN_MONEY_PERC) {
-                        obj.status = GROWING
-                        obj.ram = getRAMInfo(ns, obj.host);
-                        var num = parseInt(obj.ram.free / ram_grow);
-                        for (var n = 0; n < num; n++) {
-                            ns.exec(SCRIPT_GROW, obj.host, DEFAULT_THREADS, n)
-                        }
-                        obj.ram.free -= (ram_grow * num)
-
+                    if (obj.security.current < 0) {
+                        obj.status = EMPTY
+                        obj.color = "INFO"
+                    } else if (obj.money.perc == 0) {
+                        obj.status = EMPTY
+                        obj.color = "INFO"
+                    } else if (obj.ram.max < ram_hack) {
+                        obj.status = NO_RAM
+                        obj.color = "WARN"
                     } else {
-                        obj.status = HACKING
-                        obj.ram = getRAMInfo(ns, obj.host);
-                        var num = parseInt(obj.ram.free / ram_hack);
-                        for (var n = 0; n < num; n++) {
-                            ns.exec(SCRIPT_HACK, obj.host, DEFAULT_THREADS, n)
+                        obj.color = "OK"
+                        if (!ONLY_HACK && obj.security.current > (obj.security.min + MIN_SECURITY_MODIFIER)) {
+                            obj.status = WEAKENING
+                            obj.ram = getRAMInfo(ns, obj.host);
+                            var num = parseInt(obj.ram.free / ram_weaken);
+                            for (var n = 0; n < num; n++) {
+                                ns.exec(SCRIPT_WEAKEN, obj.host, DEFAULT_THREADS, n)
+                            }
+                            obj.ram.free -= (ram_weaken * num)
+
+                        } else if (!ONLY_HACK && obj.money.perc < MIN_MONEY_PERC) {
+                            obj.status = GROWING
+                            obj.ram = getRAMInfo(ns, obj.host);
+                            var num = parseInt(obj.ram.free / ram_grow);
+                            for (var n = 0; n < num; n++) {
+                                ns.exec(SCRIPT_GROW, obj.host, DEFAULT_THREADS, n)
+                            }
+                            obj.ram.free -= (ram_grow * num)
+
+                        } else {
+                            obj.status = HACKING
+                            obj.ram = getRAMInfo(ns, obj.host);
+                            var num = parseInt(obj.ram.free / ram_hack);
+                            for (var n = 0; n < num; n++) {
+                                ns.exec(SCRIPT_HACK, obj.host, DEFAULT_THREADS, n)
+                            }
+                            obj.ram.free -= (ram_hack * num)
                         }
-                        obj.ram.free -= (ram_hack * num)
                     }
                 }
             } else if (!obj.port.met) {
@@ -106,13 +118,18 @@ export async function main(ns) {
                 obj.status = NOT_HACKED
             }
 
-            if (obj.owned) {
-                // Don't include the hosts I created
-            } else if (skip_err && obj.color == "ERROR") {
+            if (skip_err && obj.color == "ERROR") {
                 // Skip the error because we said we're skipping those...
-            } else if (SKIP_EMPTY && obj.access.backdoor && obj.money.perc == 0) {
+            } else if (skip_empty && obj.access.backdoor && obj.money.perc == 0) {
                 // Skip if already backdoor'd and has no value
             } else {
+                ct_root_shown += obj.access.root ? 1 : 0
+                ct_backdoor_shown += obj.access.backdoor ? 1 : 0
+                ct_ports_shown += obj.port.met ? 1 : 0
+                ct_hack_shown += obj.hack.met ? 1 : 0
+                ct_value_avail_shown += obj.money.avail
+                ct_value_max_shown += obj.money.max
+                ct_hosts_shown += 1
                 line(ns, obj)
             }
 
@@ -120,9 +137,12 @@ export async function main(ns) {
             ct_backdoor += obj.access.backdoor ? 1 : 0
             ct_ports += obj.port.met ? 1 : 0
             ct_hack += obj.hack.met ? 1 : 0
+            ct_value_avail += obj.money.avail
+            ct_value_max += obj.money.max
         }
 
-        footer(ns, ct_root, ct_backdoor, ct_ports, ct_hack, ct_value, hosts.length)
+        //footer(ns, ct_root, ct_backdoor, ct_ports, ct_hack, ct_value_avail, ct_value_max, ct_hosts_shown, ct_hosts)
+        footer(ns, ct_root_shown, ct_backdoor_shown, ct_ports_shown, ct_hack_shown, ct_value_avail_shown, ct_value_max_shown, ct_hosts_shown, ct_hosts)
     }
 }
 
@@ -138,7 +158,7 @@ function openPorts(ns, h) {
 // Display
 //======================================================================
 
-var w1 = 5; var w2 = 6; var w3 = 5; var w4 = 4; var w5 = 16; var w6 = 16; var w7 = 10; var w8 = 10
+var w1 = 5; var w2 = 6; var w3 = 5; var w4 = 4; var w5_1 = 4; var w5_2 = 6; var w5_3 = 6; var w5 = (w5_1 + w5_2 + w5_3 + 6); var w6 = 12; var w7 = 10; var w8 = 20
 
 function clearLog(ns) {
     ns.disableLog("ALL");
@@ -146,21 +166,8 @@ function clearLog(ns) {
 }
 
 function header(ns) {
-    ns.print(` level | access | ports | hack | value | security | status | path`);
-    ns.print(`=======|========|=======|======|==================|==============|============|===================`);
-}
-
-function footer(ns, total_rooted, total_backdoored, total_ported, total_hacked, total_money, total_hosts) {
-    var f1 = ``.padStart(w1);
-    var f2 = `${total_rooted}`.padStart(2) + ' ' + `${total_backdoored}`.padStart(2);
-    var f3 = `${total_ported}`.padStart(w3);
-    var f4 = `${total_hacked}`.padStart(w4);
-    var f5 = `${formatUnits(total_money)}`.padStart(w5)
-    var f6 = ``.padStart(w6)
-    var f7 = ``.padStart(w7)
-    var f8 = `${total_hosts}`.padStart(w8)
-    ns.print(`=======|========|=======|======|==================|==============|============|===================`);
-    ns.print(` ${f1} | ${f2} | ${f3} | ${f4} | ${f5} | ${f6} ${f7} ${f8}`);
+    ns.print(`| ${"level".padEnd(w1)} | ${"access".padEnd(w2)} | ${"ports".padEnd(w3)} | ${"hack".padEnd(w4)} | ${"value".padEnd(w5)} | ${"security".padEnd(w6)} | ${"status".padEnd(w7)} | ${"path".padEnd(w8)} |`);
+    ns.print(`|=${"=".repeat(w1)}=|=${"=".repeat(w2)}=|=${"=".repeat(w3)}=|=${"=".repeat(w4)}=|=${"=".repeat(w5)}=|=${"=".repeat(w6)}=|=${"=".repeat(w7)}=|=${"=".repeat(w8)}=|`)
 }
 
 function line(ns, h) {
@@ -168,15 +175,24 @@ function line(ns, h) {
     var f2 = ((h.access.root ? " r" : "_") + " " + (h.access.backdoor ? "b " : "_ ")).padStart(w2);
     var f3 = `${h.port.left}`.padStart(w3);
     var f4 = `${h.hack.left}`.padStart(w4);
-    var f5 = `${h.money.perc}%`.padStart(4) + ' ' + `${(formatUnits(h.money.avail)).padStart(4)} ${formatUnits(h.money.max).padStart(4)}`;
-    var f6 = (`${('' + h.security.min).padStart(2)}. ${(h.security.diff).padStart(7)}`);
+    var f5 = `${h.money.perc}%`.padStart(w5_1) + ` ${(formatUnitsV2(h.money.avail)).padStart(w5_2)} / ${formatUnitsV2(h.money.max).padStart(w5_3)}`;
+    var f6 = ((`${('' + h.security.min).padStart(2)}. ${(h.security.diff).padStart(7)}`)).padStart(w6);
     var f7 = `${h.status}`.padStart(w7);
+    var f8 = (`${('' + h.level).padStart(2)} > ${h.host}`).padEnd(w8);
+    ns.print(`| ${f1} | ${f2} | ${f3} | ${f4} | ${f5} | ${f6} | ${f7} | ${f8} |`)
+}
 
-    var f8 = PATH_VIEW_SHORT
-        ? `${('' + h.level).padStart(2)} > ${h.host}`
-        : ('').padStart(h.level * 2) + `> ${h.host}`;
-
-    ns.print(` ${f1} | ${f2} | ${f3} | ${f4} | ${f5} | ${f6} | ${f7} | ${f8}`)
+function footer(ns, total_rooted, total_backdoored, total_ported, total_hacked, total_money_avail, total_money_max, total_hosts_shown, total_hosts) {
+    var f1 = ``.padStart(w1);
+    var f2 = (`${total_rooted}`.padStart(2) + ' ' + `${total_backdoored}`.padStart(2)).padStart(w2);
+    var f3 = `${total_ported}`.padStart(w3);
+    var f4 = `${total_hacked}`.padStart(w4);
+    var f5 = `${"".padStart(w5_1)} ${formatUnitsV2(total_money_avail)} / ${formatUnitsV2(total_money_max)}`.padStart(w5)
+    var f6 = ``.padStart(w6)
+    var f7 = ``.padStart(w7)
+    var f8 = `Total Hosts: ${total_hosts_shown} / ${total_hosts}`.padStart(w8)
+    ns.print(`|=${"=".repeat(w1)}=|=${"=".repeat(w2)}=|=${"=".repeat(w3)}=|=${"=".repeat(w4)}=|=${"=".repeat(w5)}=|=${"=".repeat(w6)}=|=${"=".repeat(w7)}=|=${"=".repeat(w8)}=|`)
+    ns.print(`| ${f1} | ${f2} | ${f3} | ${f4} | ${f5} | ${f6} ${f7} ${f8} |`);
 }
 
 //======================================================================
